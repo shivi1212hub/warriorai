@@ -1,24 +1,77 @@
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import StatsBar from "@/components/dashboard/StatsBar";
-import NotificationsPanel from "@/components/dashboard/NotificationsPanel";
-import CreditPoints from "@/components/dashboard/CreditPoints";
+import { useState, useEffect } from "react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import HeroSection from "@/components/HeroSection";
+import SOSSection from "@/components/SOSSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import HealthProfileSection from "@/components/HealthProfileSection";
+import FirstAidSection from "@/components/FirstAidSection";
+import WarriorsSection from "@/components/WarriorsSection";
+import Footer from "@/components/Footer";
+import { User, Shield, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+const SIDEBAR_STATE_KEY = "sanjeevani-sidebar-collapsed";
 
 const Index = () => {
+  const { t } = useLanguage();
+  const [defaultOpen, setDefaultOpen] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(SIDEBAR_STATE_KEY);
+    setDefaultOpen(stored !== "true");
+  }, []);
+
+  const handleOpenChange = (open: boolean) => {
+    localStorage.setItem(SIDEBAR_STATE_KEY, (!open).toString());
+  };
+
+  if (defaultOpen === undefined) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        <StatsBar />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <NotificationsPanel />
-          </div>
-          <div>
-            <CreditPoints />
-          </div>
+    <SidebarProvider defaultOpen={defaultOpen} onOpenChange={handleOpenChange}>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col">
+          <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md shadow-soft border-b border-border">
+            <div className="flex items-center justify-between h-14 px-4">
+              <SidebarTrigger className="text-foreground transition-transform duration-200 hover:scale-110" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <LanguageToggle />
+                <ThemeToggle />
+                <Button variant="outline" size="default" className="gap-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
+                  <User className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold hidden sm:inline">{t("header.patientLogin")}</span>
+                </Button>
+                <Button variant="outline" size="default" className="gap-2 border-secondary/30 hover:border-secondary hover:bg-secondary/5 transition-all duration-300 group">
+                  <Shield className="h-5 w-5 text-secondary group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold hidden sm:inline">{t("header.warriorLogin")}</span>
+                </Button>
+                <Button variant="sos" size="default" className="gap-2 animate-pulse-emergency px-6">
+                  <AlertTriangle className="h-5 w-5" />
+                  <span className="font-bold tracking-wide">{t("header.sos")}</span>
+                </Button>
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1">
+            <HeroSection />
+            <SOSSection />
+            <HowItWorksSection />
+            <HealthProfileSection />
+            <FirstAidSection />
+            <WarriorsSection />
+          </main>
+          <Footer />
         </div>
-      </main>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
