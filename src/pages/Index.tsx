@@ -8,16 +8,20 @@ import HealthProfileSection from "@/components/HealthProfileSection";
 import FirstAidSection from "@/components/FirstAidSection";
 import WarriorsSection from "@/components/WarriorsSection";
 import Footer from "@/components/Footer";
-import { User, Shield, AlertTriangle } from "lucide-react";
+import { User, Shield, AlertTriangle, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const SIDEBAR_STATE_KEY = "sanjeevani-sidebar-collapsed";
 
 const Index = () => {
   const { t } = useLanguage();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [defaultOpen, setDefaultOpen] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
@@ -44,14 +48,34 @@ const Index = () => {
               <div className="flex items-center gap-2 sm:gap-3">
                 <LanguageToggle />
                 <ThemeToggle />
-                <Button variant="outline" size="default" className="gap-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
-                  <User className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold hidden sm:inline">{t("header.patientLogin")}</span>
-                </Button>
-                <Button variant="outline" size="default" className="gap-2 border-secondary/30 hover:border-secondary hover:bg-secondary/5 transition-all duration-300 group">
-                  <Shield className="h-5 w-5 text-secondary group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold hidden sm:inline">{t("header.warriorLogin")}</span>
-                </Button>
+                {user ? (
+                  <>
+                    <Link to="/dashboard">
+                      <Button variant="outline" size="default" className="gap-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
+                        <LayoutDashboard className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                        <span className="font-semibold hidden sm:inline">Dashboard</span>
+                      </Button>
+                    </Link>
+                    <Button variant="outline" size="default" className="gap-2" onClick={signOut}>
+                      <span className="font-semibold hidden sm:inline">Sign Out</span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/auth">
+                      <Button variant="outline" size="default" className="gap-2 border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 group">
+                        <User className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                        <span className="font-semibold hidden sm:inline">{t("header.patientLogin")}</span>
+                      </Button>
+                    </Link>
+                    <Link to="/auth">
+                      <Button variant="outline" size="default" className="gap-2 border-secondary/30 hover:border-secondary hover:bg-secondary/5 transition-all duration-300 group">
+                        <Shield className="h-5 w-5 text-secondary group-hover:scale-110 transition-transform" />
+                        <span className="font-semibold hidden sm:inline">{t("header.warriorLogin")}</span>
+                      </Button>
+                    </Link>
+                  </>
+                )}
                 <Button variant="sos" size="default" className="gap-2 animate-pulse-emergency px-6">
                   <AlertTriangle className="h-5 w-5" />
                   <span className="font-bold tracking-wide">{t("header.sos")}</span>
