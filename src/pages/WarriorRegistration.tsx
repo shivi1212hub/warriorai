@@ -90,7 +90,9 @@ const WarriorRegistration = () => {
 
             <TabsContent value="map">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                <WarriorMap />
+                <Suspense fallback={<div className="flex items-center justify-center h-[400px]"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+                  <WarriorMap />
+                </Suspense>
               </motion.div>
             </TabsContent>
           </Tabs>
