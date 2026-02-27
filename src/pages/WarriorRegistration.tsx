@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Shield, Users, Map } from "lucide-react";
+import { ArrowLeft, Shield, Users, Map, Heart, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WarriorRegistrationForm from "@/components/WarriorRegistrationForm";
-import WarriorMap from "@/components/WarriorMap";
-import { Heart } from "lucide-react";
+
+const WarriorMap = lazy(() => import("@/components/WarriorMap"));
 
 const WarriorRegistration = () => {
   const [activeTab, setActiveTab] = useState("register");
